@@ -23,9 +23,9 @@ let concreteOrders = new L.LayerGroup();
 
 // Create the map object with center, zoom level and default layer.
 let map = L.map('mapid', {
-	center: [40.7, -94.5],
-	zoom: 3,
-	layers: [dark, jobLocations]
+	center: [38.599321,-121.50239],
+	zoom: 7,
+	layers: [dark, orders, concreteOrders]
 });
 
 // Create a base layer that holds all three maps.
