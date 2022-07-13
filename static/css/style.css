@@ -2,29 +2,6 @@ html,
 body,
 
 /* Sidebar */
-/* #sidebar {
-  position: absolute;
-  width: 30%;
-  height: 100%;
-  left: 0;
-  top: 0;
-  background-color: rgba(46, 42, 42, 0.8);
-}
-.sidebarElement {
-  padding: 6px;
-  display: table;
-  width: 95%;
-}
-.infoSidebarElement {
-  display: table-cell;
-  cursor: pointer;
-  width: 90%;
-}
-.removeSidebarElement {
-  display: table-cell;
-  text-align: right;
-  cursor: pointer;
-} */
 
 /* Map */
 #mapid {
