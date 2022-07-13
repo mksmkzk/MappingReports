@@ -114,15 +114,27 @@ Promise.all([
     // Check if the variable is undefined
     try {
       if ( entry['JOB CODE'] !== 'SRVICE' ) {
-        // Get the content of the marker popup.
-        content = markers[entry['JOB CODE']].getPopup().getContent();
-        //console.log(content);
-        orderMarkers[entry['JOB CODE']] = L.circleMarker(JCLocations[entry['JOB CODE']])
-          .addTo(concreteOrders)
-          .bindPopup(content + "Total Yards: " + entry['YARDS ORDERED'] + "    Supplier: " + entry['CONCRETE CO'] + "<br>")
-          .setStyle({color: 'red', fillColor: 'red'});
+
+        if (orderMarkers[entry['JOB CODE']] === undefined) {
+
+          JCDetails[entry['JOB CODE']]['ConOrders'] = "Total Yards: " + entry['YARDS ORDERED'] + "    Supplier: " + entry['CONCRETE CO'] + "<br>";
+          // Get the content of the marker popup.
+          //content = markers[entry['JOB CODE']].getPopup().getContent();
+          //console.log(content);
+          orderMarkers[entry['JOB CODE']] = L.circleMarker(JCLocations[entry['JOB CODE']])
+            .addTo(concreteOrders)
+            .bindPopup(entry['JOB CODE'])
+            .on('click', onClick)
+            .setStyle({color: 'red', fillColor: 'red'});
+
+            //.bindPopup(content + "Total Yards: " + entry['YARDS ORDERED'] + "    Supplier: " + entry['CONCRETE CO'] + "<br>")
         
+          
         }
+      }
+        // else {
+
+
       } catch (e) {
         // console.log(e);
       }
@@ -169,14 +181,17 @@ Promise.all([
     document.getElementById('details').innerHTML = JCDetails[jobCode]['JobName'] + "<br>" + JCDetails[jobCode]['JobAddress'] + "<br>" + JCDetails[jobCode]['JobTags'] + "<br>";
 
     // Update the recent orders section.
-    document.getElementById('recent-orders').innerHTML = '<b>Recent Orders</b><br>' + JCDetails[jobCode]['JobOrders'];
+    document.getElementById('recent-orders').innerHTML = '<b>Job Orders</b><br>' + JCDetails[jobCode]['JobOrders'];
     
+    // Update Concrete Orders
+    document.getElementById('concrete-orders').innerHTML = '<b>Concrete Orders</b><br>' + JCDetails[jobCode]['ConOrders'];
+
     sidebar.open('home');
   }
   
   files[0].forEach(AddMarkers);
   files[1].forEach(ExtractOrders);
-  // files[2].forEach(ExtractOrders2);
+  files[2].forEach(ExtractOrders2);
   // files[3].forEach(ExtractOrders3);
 
 });
