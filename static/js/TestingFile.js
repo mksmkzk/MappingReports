@@ -228,7 +228,7 @@ Promise.all([
 
 
   // Open the popup of the first marker.
-  // OpenPopupLoop(whOrderMarkers);
+  //OpenPopupLoop(concreteMarkers);
 
 });
 
