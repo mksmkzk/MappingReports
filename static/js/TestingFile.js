@@ -10,6 +10,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 
+// TODO: Get a list of all the undefined job locations.
+
 // An object to save the markers.
 var JCLocations = {};
 var markers = {};
@@ -24,9 +26,6 @@ Promise.all([
 
   // TODO: Figure our how to get data from local files.
 
-  // Local Files
-  // d3.csv("../data/mapping.csv"),
-  // d3.csv("../data/orders.csv")
   // Github Files
   d3.csv('https://raw.githubusercontent.com/ScottyMacCVC/EoStoECMS/main/Resources/Report%20to%20Map/static/data/mapping.csv'),
   d3.csv('https://raw.githubusercontent.com/ScottyMacCVC/EoStoECMS/main/Resources/Report%20to%20Map/static/data/orders.csv'),
@@ -40,8 +39,7 @@ Promise.all([
   
   // Debug Purpose: console.log the files.
   // console.log(files[0]);
-  // console.log(files[1]);
-  // console.log(files[2]);
+
 
   // Function to loop through data and add each entry to the map.
   var AddMarkers = function(entry)
@@ -60,50 +58,40 @@ Promise.all([
       .addTo(jobLocations)
       .on('click', onClick)
       .bindPopup(entry['Job Code']);
-      //+ "<br>Address: " + entry['Address']);
-
   };
 
   // A Function to go through the orders and sort them by Job Number.
-  var ExtractOrders = function(entry) {
+  var ExtractWarehouseOrders = function(entry) {
     // DEBUG AREA
-    // console.log(entry['Job Number(QProduct)']);
 
     // Check if the variable is undefined
     try {
       if ( entry['Job Number(QProduct)'] !== 'SRVICE' ) {
         
-
-        
         if (orderMarkers[entry['Job Number(QProduct)']] === undefined) {
 
-          // Get the content of the marker popup.
-          // content = markers[entry['Job Number(QProduct)']].getPopup().getContent();
-
-          JCDetails[entry['Job Number(QProduct)']]['JobOrders'] = "Part: " + entry['Part Description'] + "\tQuantity: " + entry['Quantity Shipped'] + "<br>";
+          JCDetails[entry['Job Number(QProduct)']]['WHOrders'] = entry['Part Description'] + "\tQuantity: " + entry['Quantity Shipped'] + "<br>";
 
           orderMarkers[entry['Job Number(QProduct)']] = L.circleMarker(JCLocations[entry['Job Number(QProduct)']])
             .addTo(orders)
-            //.bindPopup(content + "Part: " + entry['Part Description'] + "        Quantity: " + entry['Quantity Shipped'] + "<br>")
             .on('click', onClick)
             .bindPopup(entry['Job Number(QProduct)'])
             .setStyle({color: 'orange', fillColor: 'orange'});
         }
         else {
-          //content = orderMarkers[entry['Job Number(QProduct)']].getPopup().getContent();
           // console.log(content);
 
-          JCDetails[entry['Job Number(QProduct)']]['JobOrders'] += "Part: " + entry['Part Description'] + "\tQuantity: " + entry['Quantity Shipped'] + "<br>";
-
-          orderMarkers[entry['Job Number(QProduct)']].getPopup().setContent(content + "Part: " + entry['Part Description'] + "        Quantity: " + entry['Quantity Shipped'] + "<br>");
+          JCDetails[entry['Job Number(QProduct)']]['JobOrders'] += entry['Part Description'] + "\tQuantity: " + entry['Quantity Shipped'] + "<br>";
         }
 
         
 
         }
-      } catch (e) {
-        // console.log(e);
-      }
+    } catch (error) {
+      // Log any Errors.
+      console.log(entry['Job Number(QProduct)'])
+      console.log(error);
+    }
   };
 
   // A Function to go through the orders and sort them by Job Number.
@@ -167,30 +155,40 @@ Promise.all([
   // A function to be called when the user clicks on a marker.
   // Will update the sidebar with the information about the marker.
   function onClick(e) {
-    //console.log(document.getElementById('sidebar-header').innerHTML);
+
     // Change the header name of the sidebar to the job code. 
     var tail = '<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>'
     var jobCode = e.target.getPopup().getContent();
-
-    const header = document.getElementById('sidebar-header').innerHTML;
 
     // Update the header of the sidebar.
     document.getElementById('sidebar-header').innerHTML = jobCode + tail;
 
     // Update the details section
-    document.getElementById('details').innerHTML = JCDetails[jobCode]['JobName'] + "<br>" + JCDetails[jobCode]['JobAddress'] + "<br>" + JCDetails[jobCode]['JobTags'] + "<br>";
+    document.getElementById('details').innerHTML = "Name: " + JCDetails[jobCode]['JobName'] + "<br>" +
+                                                   "Address: " + JCDetails[jobCode]['JobAddress'] + "<br>" +
+                                                   "Tags: " + JCDetails[jobCode]['JobTags'] + "<br>";
 
-    // Update the recent orders section.
-    document.getElementById('recent-orders').innerHTML = '<b>Job Orders</b><br>' + JCDetails[jobCode]['JobOrders'];
+    // Update Warehouse Orders.
+    if (JCDetails[jobCode]['JobOrders'] !== undefined) {
+      document.getElementById('recent-orders').innerHTML = '<b>Warehouse Orders</b><br>' + JCDetails[jobCode]['JobOrders'];
+    }
+    else {
+      document.getElementById('recent-orders').innerHTML = '<b>Job Orders</b><br>No recent warehouse orders for this job.';
+    }
     
     // Update Concrete Orders
-    document.getElementById('concrete-orders').innerHTML = '<b>Concrete Orders</b><br>' + JCDetails[jobCode]['ConOrders'];
+    if (JCDetails[jobCode]['ConOrders'] !== undefined) {
+      document.getElementById('concrete-orders').innerHTML = '<b>Concrete Orders</b><br>' + JCDetails[jobCode]['ConOrders'];
+    }
+    else {
+      document.getElementById('concrete-orders').innerHTML = '<b>Concrete Orders</b><br>No recent concrete orders for this job.';
+    }
 
     sidebar.open('home');
   }
   
   files[0].forEach(AddMarkers);
-  files[1].forEach(ExtractOrders);
+  files[1].forEach(ExtractWarehouseOrders);
   files[2].forEach(ExtractOrders2);
   // files[3].forEach(ExtractOrders3);
 
