@@ -40,7 +40,7 @@ Promise.all([
 ]).then(function(files) {
   
   // Debug Purpose: console.log the files.
-  // console.log(files[1]);
+  console.log(files[2]);
 
 
   // Function to loop through data and add each entry to the map.
@@ -131,7 +131,8 @@ Promise.all([
         }    
       }
     } catch (e) {
-        console.log(e);
+      console.log(entry['JOB CODE']);
+        // console.log(e);
     }
   };
 
@@ -182,7 +183,7 @@ Promise.all([
 
     // Update Warehouse Orders.
     if (JCDetails[jobCode]['WHOrders'] !== undefined) {
-      document.getElementById('recent-orders').innerHTML = '<b>Warehouse Orders</b><br>';
+      document.getElementById('recent-orders').innerHTML = '<b>WareHouse Orders</b><br><br>';
 
       for (var key in JCDetails[jobCode]['WHOrders']){
         document.getElementById('recent-orders').innerHTML += "Date: " + key + "<br><br>" ;
@@ -190,12 +191,12 @@ Promise.all([
       }
     }
     else {
-      document.getElementById('recent-orders').innerHTML = '<b>Job Orders</b><br>No recent warehouse orders for this job.';
+      document.getElementById('recent-orders').innerHTML = '<b>WareHouse Orders</b><br><br>No recent warehouse orders for this job.<br><br>';
     }
     
     // Update Concrete Orders
     if (JCDetails[jobCode]['ConOrders'] !== undefined) {
-      document.getElementById('recent-orders').innerHTML += '<b>Concrete Orders</b><br>';
+      document.getElementById('recent-orders').innerHTML += '<b>Concrete Orders</b><br><br>';
 
       for (var key in JCDetails[jobCode]['ConOrders']){
         document.getElementById('recent-orders').innerHTML += "Date: " + key + "<br><br>" ;
@@ -203,7 +204,7 @@ Promise.all([
       }
     }
     else {
-      document.getElementById('concrete-orders').innerHTML = '<b>Concrete Orders</b><br>No recent concrete orders for this job.';
+      document.getElementById('concrete-orders').innerHTML = '<b>Concrete Orders</b><br>No recent concrete orders for this job.<br><br>';
     }
 
     sidebar.open('home');
