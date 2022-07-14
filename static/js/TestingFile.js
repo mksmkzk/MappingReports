@@ -196,14 +196,14 @@ Promise.all([
     
     // Update Concrete Orders
     if (JCDetails[jobCode]['ConOrders'] !== undefined) {
-      document.getElementById('recent-orders').innerHTML += '<b>Concrete Orders</b><br><br>';
+      
+      document.getElementById('concrete-orders').innerHTML = '<b>Concrete Orders</b><br><br>';
 
       for (var key in JCDetails[jobCode]['ConOrders']){
-        document.getElementById('recent-orders').innerHTML += "Date: " + key + "<br><br>" ;
-        document.getElementById('recent-orders').innerHTML += JCDetails[jobCode]['ConOrders'][key] + "<br>";
+        document.getElementById('concrete-orders').innerHTML += "Date: " + key + "<br><br>" ;
+        document.getElementById('concrete-orders').innerHTML += JCDetails[jobCode]['ConOrders'][key] + "<br>";
       }
-    }
-    else {
+    } else {
       document.getElementById('concrete-orders').innerHTML = '<b>Concrete Orders</b><br>No recent concrete orders for this job.<br><br>';
     }
 
