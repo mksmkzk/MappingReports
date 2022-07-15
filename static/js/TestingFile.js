@@ -12,6 +12,7 @@
 
 // TODO: Get a list of all the undefined job locations.
 var undefinedJobLocations = [];
+var recentOrderList = [];
 
 // An object to save the markers.
 var JCLocations = {};
@@ -129,6 +130,11 @@ Promise.all([
         
         if (whOrderMarkers[entry['Job Number']] === undefined) {
 
+          if (recentOrderList.includes(entry['Job Number']) === false && entry['Job Number'] !== '') {  
+             recentOrderList.push(entry['Job Number']);
+             document.getElementById('locationList').innerHTML += '<li><a href="#" onclick="PopulateSidebar(\'' + entry['Job Number'] + '\')">' + entry['Job Number'] + '</a></li>';
+          }
+
           JCDetails[entry['Job Number']]['WHOrders'] = { [entry['Invoice Date']] : entry['Part Description'] + "\tQuantity: " + entry['Quantity Shipped'] + "<br>"};
 
           whOrderMarkers[entry['Job Number']] = L.circleMarker(JCLocations[entry['Job Number']])
@@ -178,6 +184,12 @@ Promise.all([
                                                                           startTime : entry['START TIME'],
                                                                           comments : entry['COMMENTS']}] };
         
+  
+        if (recentOrderList.includes(entry['JOB CODE']) === false && entry['JOB CODE'] !== '') {  
+          recentOrderList.push(entry['JOB CODE']);
+          document.getElementById('locationList').innerHTML += '<li><a href="#" onclick="PopulateSidebar(' + entry['JOB CODE'] + ')">' + entry['JOB CODE'] + '</a></li>';
+        }
+
         concreteMarkers[entry['JOB CODE']] = L.circleMarker(JCLocations[entry['JOB CODE']])
           .addTo(concreteOrders)
           .bindPopup(entry['JOB CODE'])
@@ -252,12 +264,10 @@ Promise.all([
   files[0].forEach(AddMarkers);
   files[1].forEach(ExtractWarehouseOrders);
   files[2].forEach(ExtractConcreteOrders);
-  // files[3].forEach(ExtractOrders3);
-
+  // files[3].forEach(ExtractOrders3);  
 
   
 });
-
 
 // A function to loop through the markers and open the popup.
 async function OpenPopupLoop(markers) {
@@ -273,3 +283,4 @@ async function OpenPopupLoop(markers) {
 // Infinite loop to cycle concrete orders
 
 OpenPopupLoop(concreteMarkers);
+
