@@ -89,7 +89,6 @@ Promise.all([
   // Github Files
   d3.csv('https://raw.githubusercontent.com/mksmkzk/MappingReports/main/static/data/mapping.csv'),
   d3.csv('https://raw.githubusercontent.com/mksmkzk/MappingReports/main/static/data/orders.csv'),
-  //d3.csv('https://raw.githubusercontent.com/mksmkzk/MappingReports/main/static/data/7-23%20CONCRETE%20SCHED.csv'),
   d3.csv('https://raw.githubusercontent.com/mksmkzk/MappingReports/main/static/data/ConcreteOrdersMap.csv')
   // Network Files
   // d3.csv("file:///Z:/8-THE STANDARD/12-EoS to eCMS/Resources/Report to Map/Addresses List-Transform.csv"),
@@ -226,29 +225,6 @@ Promise.all([
     }
   };
 
-    // A Function to go through the orders and sort them by Job Number.
-    var ExtractOrders3 = function(entry) {
-      // DEBUG AREA
-
-  
-      // Check if the variable is undefined
-      try {
-        if ( entry['Job code'] !== 'SRVICE' ) {
-          // Get the content of the marker popup.
-          content = markers[entry['Job code']].getPopup().getContent();
-          //console.log(content);
-          concreteMarkers[entry['Job code']] = L.circleMarker(JCLocations[entry['Job code']])
-          .addTo(concreteOrders)
-          .bindPopup(content + "<br>Total Yards: " + entry['Total Yards'] + "    Supplier: " + entry['Supplier'] + "<br>")
-          .setStyle({color: 'red', fillColor: 'red'});
-          
-          }
-        } catch (e) {
-          // console.log(e);
-        }
-    };
-
-  //console.log(markers)
 
   // A function to be called when the user clicks on a marker.
   function onClick(e) {
@@ -282,5 +258,5 @@ async function OpenPopupLoop(markers) {
 
 // Infinite loop to cycle concrete orders
 
-OpenPopupLoop(concreteMarkers);
+// OpenPopupLoop(concreteMarkers);
 
