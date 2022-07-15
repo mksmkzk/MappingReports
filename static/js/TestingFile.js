@@ -120,9 +120,9 @@ Promise.all([
                                                                           "Total Yards : " +  entry['YARDS ORDERED'] + "<br>" + 
                                                                           "Supplier: " + entry['CONCRETE CO'] + "<br>"]};
   
-        if (recentOrderList.includes(entry['Job Number']) === false && entry['Job Number'] !== '') {  
-          recentOrderList.push(entry['Job Number']);
-          document.getElementById('locationList').innerHTML += '<li><a href="#" onclick="PopulateSidebar(' + entry['Job Number'] + ')">' + entry['Job Number'] + '</a></li>';
+        if (recentOrderList.includes(entry['JOB CODE']) === false && entry['JOB CODE'] !== '') {  
+          recentOrderList.push(entry['JOB CODE']);
+          document.getElementById('locationList').innerHTML += '<li><a href="#" onclick="PopulateSidebar(' + entry['JOB CODE'] + ')">' + entry['JOB CODE'] + '</a></li>';
         }
 
         concreteMarkers[entry['JOB CODE']] = L.circleMarker(JCLocations[entry['JOB CODE']])

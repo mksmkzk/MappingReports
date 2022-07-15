@@ -40,3 +40,4 @@ function PopulateSidebar(jobCode) {
 
     sidebar.open('home');
 }
+
