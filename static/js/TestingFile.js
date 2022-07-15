@@ -165,6 +165,9 @@ Promise.all([
     } catch (e) {
       console.log(entry['JOB CODE']);
         // console.log(e);
+        if (undefinedJobLocations.includes(entry["JOB CODE"]) === false) {
+          undefinedJobLocations.push(entry["JOB CODE"]);
+        }
     }
   };
 

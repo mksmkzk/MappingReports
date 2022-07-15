@@ -1,14 +1,9 @@
 // Will update the sidebar with the information about the marker.
 function PopulateSidebar(jobCode) {
-   
-    // Change the header name of the sidebar to the job code. 
-    var tail = '<span class="sidebar-close"><i class="fa fa-caret-left"></i></span>'
-  
-    // Update the header of the sidebar.
-    document.getElementById('sidebar-header').innerHTML = jobCode + tail;
   
     // Update the details section
-    document.getElementById('details').innerHTML = "Name: " + JCDetails[jobCode]['JobName'] + "<br>" +
+    document.getElementById('details').innerHTML = "<h1><center>" + jobCode + "</center></h1><br>" +
+                                                   "Name: " + JCDetails[jobCode]['JobName'] + "<br>" +
                                                    "Address: " + JCDetails[jobCode]['JobAddress'] + "<br>" +
                                                    "Tags: " + JCDetails[jobCode]['JobTags'] + "<br>";
   
