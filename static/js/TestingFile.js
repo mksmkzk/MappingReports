@@ -32,8 +32,7 @@ Promise.all([
   // Github Files
   d3.csv('https://raw.githubusercontent.com/mksmkzk/MappingReports/main/static/data/mapping.csv'),
   d3.csv('https://raw.githubusercontent.com/mksmkzk/MappingReports/main/static/data/orders.csv'),
-  //d3.csv('https://raw.githubusercontent.com/mksmkzk/MappingReports/main/static/data/7-23%20CONCRETE%20SCHED.csv'),
-  d3.csv('https://raw.githubusercontent.com/mksmkzk/MappingReports/main/static/data/ConcreteOrders.csv')
+  d3.csv('https://raw.githubusercontent.com/mksmkzk/MappingReports/main/static/data/ConcreteOrdersMap.csv')
   // Network Files
   // d3.csv("file:///Z:/8-THE STANDARD/12-EoS to eCMS/Resources/Report to Map/Addresses List-Transform.csv"),
   // d3.csv("")
@@ -41,7 +40,7 @@ Promise.all([
 ]).then(function(files) {
   
   // Debug Purpose: console.log the files.
-  console.log(files[2]);
+  //console.log(files[2]);
 
 
   // Function to loop through data and add each entry to the map.
@@ -116,9 +115,17 @@ Promise.all([
     try {
       if (concreteMarkers[entry['JOB CODE']] === undefined) {
 
-        JCDetails[entry['JOB CODE']]['ConOrders'] = { [entry['DATE']] : ["Type of Pour: " + entry['TYPE of POUR'] + "<br>" + 
-                                                                          "Total Yards : " +  entry['YARDS ORDERED'] + "<br>" + 
-                                                                          "Supplier: " + entry['CONCRETE CO'] + "<br>"]};
+        JCDetails[entry['JOB CODE']]['ConOrders'] = { [entry['DATE']] : [{ division : entry['DIVSIONS'],
+                                                                          crew : entry['CREW'],
+                                                                          subjob : entry['SUB JOB'],
+                                                                          customer : entry['CUSTOMER'],
+                                                                          pourType :  entry['TYPE of POUR'], 
+                                                                          totalYards : entry['YARDS ORDERED'],
+                                                                          supplier : entry['CONCRETE CO'],
+                                                                          supplierPhone : entry['PHONE NO'],
+                                                                          startTime : entry['START TIME'],
+                                                                          comments : entry['COMMENTS']}] };
+        
   
         if (recentOrderList.includes(entry['JOB CODE']) === false && entry['JOB CODE'] !== '') {  
           recentOrderList.push(entry['JOB CODE']);
@@ -132,44 +139,38 @@ Promise.all([
           .setStyle({color: 'red', fillColor: 'red'}); 
       } else {
         if (JCDetails[entry['JOB CODE']]['ConOrders'][entry['DATE']] === undefined) {
-          JCDetails[entry['JOB CODE']]['ConOrders'][entry['DATE']] = ["Type of Pour: " + entry['TYPE of POUR'] + "<br>" + 
-                                                                      "Total Yards : " +  entry['YARDS ORDERED'] + "<br>" + 
-                                                                      "Supplier: " + entry['CONCRETE CO'] + "<br>"];
+          JCDetails[entry['JOB CODE']]['ConOrders'][entry['DATE']] = [{ division : entry['DIVISION'],
+                                                                        crew : entry['CREW'],
+                                                                        subjob : entry['SUB JOB'],
+                                                                        customer : entry['CUSTOMER'],
+                                                                        pourType :  entry['TYPE of POUR'], 
+                                                                        totalYards : entry['YARDS ORDERED'],
+                                                                        supplier : entry['CONCRETE CO'],
+                                                                        supplierPhone : entry['PHONE NO'],
+                                                                        startTime : entry['START TIME'],
+                                                                        comments : entry['COMMENTS']}];
         } else {
-          JCDetails[entry['JOB CODE']]['ConOrders'][entry['DATE']].push("Type of Pour: " + entry['TYPE of POUR'] + "<br>" + 
-                                                                        "Total Yards : " +  entry['YARDS ORDERED'] + "<br>" + 
-                                                                        "Supplier: " + entry['CONCRETE CO'] + "<br>");
+          JCDetails[entry['JOB CODE']]['ConOrders'][entry['DATE']].push({division : entry['DIVISION'],
+                                                                          crew : entry['CREW'],
+                                                                          subjob : entry['SUB JOB'],
+                                                                          customer : entry['CUSTOMER'],
+                                                                          pourType :  entry['TYPE of POUR'], 
+                                                                          totalYards : entry['YARDS ORDERED'],
+                                                                          supplier : entry['CONCRETE CO'],
+                                                                          supplierPhone : entry['PHONE NO'],
+                                                                          startTime : entry['START TIME'],
+                                                                          comments : entry['COMMENTS']});
         }    
       }
     } catch (e) {
       console.log(entry['JOB CODE']);
         // console.log(e);
+        if (undefinedJobLocations.includes(entry["JOB CODE"]) === false) {
+          undefinedJobLocations.push(entry["JOB CODE"]);
+        }
     }
   };
 
-    // A Function to go through the orders and sort them by Job Number.
-    var ExtractOrders3 = function(entry) {
-      // DEBUG AREA
-
-  
-      // Check if the variable is undefined
-      try {
-        if ( entry['Job code'] !== 'SRVICE' ) {
-          // Get the content of the marker popup.
-          content = markers[entry['Job code']].getPopup().getContent();
-          //console.log(content);
-          concreteMarkers[entry['Job code']] = L.circleMarker(JCLocations[entry['Job code']])
-          .addTo(concreteOrders)
-          .bindPopup(content + "<br>Total Yards: " + entry['Total Yards'] + "    Supplier: " + entry['Supplier'] + "<br>")
-          .setStyle({color: 'red', fillColor: 'red'});
-          
-          }
-        } catch (e) {
-          // console.log(e);
-        }
-    };
-
-  //console.log(markers)
 
   // A function to be called when the user clicks on a marker.
   function onClick(e) {
@@ -180,27 +181,28 @@ Promise.all([
 
   
 
-  // A function to loop through the markers and open the popup.
-  async function OpenPopupLoop(markers) {
-    for (var key in markers) {
-      markers[key].openPopup();
-      PopulateSidebar(key);
-      
 
-      await new Promise(resolve => setTimeout(resolve, 30000));
-    }
-  }
   
   files[0].forEach(AddMarkers);
   files[1].forEach(ExtractWarehouseOrders);
   files[2].forEach(ExtractConcreteOrders);
   // files[3].forEach(ExtractOrders3);  
 
-  // Open the popup of the first marker.
-  //OpenPopupLoop(concreteMarkers);
-
+  
 });
 
- 
+// A function to loop through the markers and open the popup.
+async function OpenPopupLoop(markers) {
+  for (var key in markers) {
+    markers[key].openPopup();
+    PopulateSidebar(key);
+    
 
-//AddRecentOrdersToList(JCDetails);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  }
+}
+
+// Infinite loop to cycle concrete orders
+
+// OpenPopupLoop(concreteMarkers);
+
